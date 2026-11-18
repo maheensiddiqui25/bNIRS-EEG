@@ -1,0 +1,5 @@
+cff-version: 1.2.0 message: “If you use this software, please cite it
+using the metadata below.” title: “NEST bNIRS and EEG Data Analysis
+Pipeline” version: 1.0.0 date-released: 2026-11-18 doi:
+10.5281/zenodo.24345172 license: MIT type: software authors: -
+family-names: “[Siddiqui]” given-names: “[Maheen]”
