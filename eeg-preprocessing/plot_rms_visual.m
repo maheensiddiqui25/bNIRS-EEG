@@ -1,7 +1,6 @@
 
-%%To reproduce Figure 11: Scalp topographies of average EEG power (10–18 s post-stimulus)
-% This script generates scalp topographies showing the average EEG RMS
-% power across the scalp during the 10–18 s post-stimulus period.
+%%To reproduce Figure 11: Scalp topographies of average EEG power across the block
+%
 %
 % RMS power values are averaged across infants for each electrode,
 % separately for four frequency bands: theta, alpha, beta and gamma.
