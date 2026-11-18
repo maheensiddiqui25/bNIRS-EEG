@@ -1,3 +1,16 @@
+%% To reproduce Figure 12: Posterior EEG variability across infants
+% This script visualises the variability in EEG RMS power across infants
+% at six posterior electrodes. RMS power is plotted separately for four
+% frequency bands: theta, alpha, beta and gamma.
+%
+% The input variable r contains RMS power values organised as:
+% channel x infant x frequency band.
+%
+% Individual infant values are displayed alongside boxplots to show the
+% distribution of responses across infants at each electrode. Data are
+% not averaged across posterior channels, allowing variability at each
+% electrode to be examined separately.
+
 %% ============================================================
 % Posterior EEG variability across infants
 %
