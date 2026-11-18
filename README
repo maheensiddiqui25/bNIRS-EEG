@@ -260,14 +260,12 @@ the analyses reported in the associated research.
 ## 6. Citation and reuse
 
 If you use or adapt the code in this repository, please cite the
-associated NEST research publication:
-
-**\[Insert full publication reference\]**
+associated research publication. 
 
 The repository and its archived version should also be cited using the
 associated DOI:
 
-**\[Insert repository DOI\]**
+**\[10.5281/zenodo.24345172\]**
 
 Please refer to the repository licence for the terms governing reuse,
 modification and redistribution of the code.
