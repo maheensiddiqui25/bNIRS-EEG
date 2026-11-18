@@ -1,9 +1,35 @@
+%% Figure 13: Combined bNIRS and EEG visualisation
+% This script generates combined bNIRS and EEG figures, allowing the
+% haemodynamic and electrophysiological responses to be visualised
+% together for individual infants.
+%
+% The bNIRS data contain HbO2, HHb and oxCCO responses across channels,
+% while the EEG data contain RMS power values across electrodes for four
+% frequency bands: theta, alpha, beta and gamma.
+%
+% Each figure displays the bNIRS time courses across the selected channels
+% alongside EEG scalp topographies for the corresponding infant. The
+% script includes different plotting configurations for selected
+% individuals, with different axis limits to accommodate the response
+% ranges being visualised.
 
+% Load the bNIRS and EEG data if not already available in the workspace.
 %load('bNIRSDATA.mat')
 %load('EEGDATA.mat')
 
 bNIRS = bNIRS_DATA; %your bNIRS data
 r = EEG_DATA; %your EEG data
+
+%% ============================================================
+% Plot combined bNIRS and EEG responses for all selected infants
+% ============================================================
+% Define the EEG frequency bands, bNIRS channel numbers and plotting
+% limits. A separate figure is generated for each infant.
+%
+% The first 14 subplot positions are used for bNIRS channel responses.
+% The remaining subplot positions are combined to accommodate four EEG
+% topoplots, one for each frequency band.
+
 %% ============================================================
 % bNIRS + EEG figure
 %% ============================================================
