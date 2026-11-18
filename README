@@ -1,0 +1,273 @@
+# NEST bNIRS and EEG Analysis Pipeline
+
+## Overview
+
+This repository contains the MATLAB scripts used to process and analyse
+broadband near-infrared spectroscopy (bNIRS) and electroencephalography
+(EEG) data collected as part of the NEST study.
+
+The code processes the recorded data, calculates haemodynamic and
+electrophysiological responses, performs statistical analyses, and
+generates figures for the associated research.
+
+The bNIRS pipeline examines changes in oxygenated haemoglobin (HbO2),
+deoxygenated haemoglobin (HHb) and oxidised cytochrome-c-oxidase
+(oxCCO). The EEG pipeline examines RMS power across theta, alpha, beta
+and gamma frequency bands. The two modalities can also be visualised
+together.
+
+**Important:** Raw participant data are not included in this repository.
+Reproducing the analyses requires access to the original recordings and
+associated event, stimulus and participant information. These can be requested 
+from the authors through a formal data sharing agreement as data cannot be made 
+available freely.
+
+------------------------------------------------------------------------
+
+## Repository organisation
+
+  -----------------------------------------------------------------------
+  Component                           Description
+  ----------------------------------- -----------------------------------
+  bNIRS analysis                      Broadband data processing,
+                                      chromophore concentration
+                                      estimation, event-related
+                                      averaging, response classification,
+                                      statistical analysis and
+                                      visualisation.
+
+  EEG analysis                        EEG preprocessing, transformation
+                                      of recording data, RMS power
+                                      calculation, statistical analysis
+                                      and visualisation.
+
+  Combined bNIRS and EEG              Scripts for displaying individual
+  visualisation                       bNIRS responses alongside EEG scalp
+                                      topographies.
+  -----------------------------------------------------------------------
+
+## 1. bNIRS analysis
+
+### Overview
+
+The bNIRS analysis processes broadband near-infrared intensity
+measurements to estimate changes in HbO2, HHb and oxCCO.
+
+The acquisition system records broadband intensity across 780--900 nm
+using 120 wavelengths. Measurements are collected from 19 bNIRS
+channels: 10 occipital channels and 9 right-hemisphere channels. The
+source--detector separation is 2.5 cm, and the sampling frequency is 1
+Hz.
+
+### bNIRS scripts
+
+  ------------------------------------------------------------------------------------------
+  Script                                                 Description
+  ------------------------------------------------------ -----------------------------------
+  `NEST_analysis2018.m`                                  Main broadband NIRS analysis
+                                                         script.
+
+  `V_BBS_Segmenting.m`                                   Segments the broadband data into
+                                                         the relevant recording sections.
+
+  `V_BBS_Sorting.m`                                      Sorts the segmented broadband data
+                                                         for subsequent processing.
+
+  `V_BBS_MBL.m`                                          Performs broadband processing using
+                                                         the modified Beer--Lambert
+                                                         approach.
+
+  `Channel_Reject.m`                                     Handles channel rejection within
+                                                         the bNIRS processing workflow.
+
+  `average_NEST.m`                                       Calculates event-related averages
+                                                         across the bNIRS recordings.
+
+  `bNIRS_visual_plotting_stats.m`                        Main bNIRS plotting and statistical
+                                                         analysis script.
+
+  `butterfly_plot_collapsed.m`                           Generates collapsed-condition
+                                                         group-average plots of HbO2, HHb
+                                                         and oxCCO responses across
+                                                         channels.
+
+  `pos_neg_rPWR_rCST.m`                                  Separates positive and negative
+                                                         chromophore response groups,
+                                                         standardises responses across
+                                                         channels, calculates relative power
+                                                         (rPWR) and relative cost (rCST),
+                                                         and performs associated statistical
+                                                         analyses.
+
+  `hmrMotionArtifactByChannel.m`                         Motion artefact processing
+                                                         function.
+
+  `abscoeff.m`                                           Calculates absorption coefficients.
+
+  `tissue_specific_extinction_coefficient_650to1000.m`   Provides tissue-specific extinction
+                                                         coefficient information across the
+                                                         specified wavelength range.
+
+  `water_specific_extinction_spectrum_37Celcius.m`       Provides the water absorption
+                                                         spectrum at 37°C.
+
+  `DPF_Lambda_Dependency_740to915.m`                     Provides wavelength-dependent
+                                                         differential pathlength factor
+                                                         information.
+
+  `colorpalette.m`                                       Defines colour palettes used in the
+                                                         visualisations.
+  ------------------------------------------------------------------------------------------
+
+### bNIRS processing and analysis
+
+The bNIRS workflow includes the following broad stages:
+
+1.  **Broadband data processing.** Broadband intensity measurements are
+    processed to estimate changes in HbO2, HHb and oxCCO.
+2.  **Event-related segmentation and averaging.** Recordings are
+    segmented according to experimental events. Event-related responses
+    are averaged to generate individual and group-level response data.
+3.  **Group-level response analysis.** Plotting scripts generate
+    individual and group-level chromophore response visualisations,
+    including channel-level time courses and collapsed-condition plots.
+4.  **Statistical analysis.** For the channel-level analysis associated
+    with Figure 9, mean responses are extracted from the 14--18 s
+    post-stimulus window for 12 infants across 13 selected channels.
+    One-sample t-tests are performed against zero separately for HbO2,
+    HHb and oxCCO. Benjamini--Hochberg false discovery rate (FDR)
+    correction is applied across channels separately for each
+    chromophore.
+5.  **Positive and negative response analysis.** `pos_neg_rPWR_rCST.m`
+    separates responses into positive and negative response groups based
+    on chromophore responses. Responses are standardised across channels
+    within each infant and transformed into relative power and relative
+    cost measures using a 45-degree rotation of the standardised
+    chromophore response axes. The script calculates group-average rPWR
+    and rCST values and performs one-sample tests against zero.
+
+### bNIRS data structure
+
+The `Avg_NEST` structure contains one element per infant. Within this
+structure:
+
+-   `avgtot` contains trial-level data, organised as time × chromophore
+    × channels × trials.
+-   `average_data` contains the baseline-corrected trial average,
+    organised as time × chromophore × channel.
+
+  -----------------------------------------------------------------------
+  Variable                Dimensions              Description
+  ----------------------- ----------------------- -----------------------
+  `Avg_NEST`              One structure element   Contains individual
+                          per infant              infant bNIRS data.
+
+  `avgtot`                Time × chromophore ×    Trial-level chromophore
+                          channel × trial         responses.
+
+  `average_data`          Time × chromophore ×    Baseline-corrected
+                          channel                 trial-average
+                                                  responses.
+  -----------------------------------------------------------------------
+
+## 2. EEG analysis
+
+### Overview
+
+The EEG pipeline preprocesses the original EEG recordings and calculates
+RMS power across theta, alpha, beta and gamma frequency bands. The
+resulting data are used to generate scalp topographies, examine
+variability across posterior electrodes and visualise EEG responses
+alongside bNIRS measurements.
+
+### EEG scripts
+
+  -----------------------------------------------------------------------
+  Script                              Description
+  ----------------------------------- -----------------------------------
+  `EEG_EasyFilePreprocessing.m`       Preprocesses the original EEG
+                                      recordings, including filtering,
+                                      epoching, baseline correction and
+                                      handling of bad electrodes.
+
+  `transform_all_EEG.m`               Transforms the preprocessed EEG
+                                      data into MATLAB data structures
+                                      while retaining the original
+                                      recording block information.
+
+  `spectral_visual.m`                 Calculates RMS power across
+                                      recording blocks for the different
+                                      EEG frequency bands and conditions.
+
+  `rms_stats.m`                       Performs statistical analysis of
+                                      the RMS power data.
+
+  `plot_rms_visual.m`                 Generates EEG scalp topographies
+                                      using the RMS power data produced
+                                      by `spectral_visual.m`.
+
+  Figure plotting scripts             Generate posterior EEG variability
+                                      plots and combined bNIRS--EEG
+                                      visualisations.
+  -----------------------------------------------------------------------
+
+### EEG processing workflow
+
+The EEG analysis follows this sequence:
+
+1.  **EEG preprocessing -- `EEG_EasyFilePreprocessing.m`.** The original
+    recordings are preprocessed. This includes band-pass filtering,
+    notch filtering to remove line noise, assignment of electrode
+    locations, event-related epoch extraction, baseline correction,
+    identification and handling of bad electrodes (including
+    interpolation where required), and rejection of EEG epochs based on
+    the associated NIRS artefact information.
+2.  **Transformation of EEG data -- `transform_all_EEG.m`.** The
+    preprocessed recordings are transformed into MATLAB data structures
+    for subsequent analysis. The resulting `EEG_data_mat` structure
+    retains the original recording block information.
+3.  **RMS power calculation -- `spectral_visual.m`.** RMS power is
+    calculated across recording blocks for the relevant EEG conditions
+    and frequency bands. The resulting RMS power variables are used in
+    subsequent statistical analyses and plotting. In particular,
+    `rms2_conditionXX_avg` is used by `plot_rms_visual.m` to generate
+    scalp topographies.
+4.  **Statistical analysis -- `rms_stats.m`.** This script performs
+    statistical analysis of the EEG RMS power data.
+5.  **Visualisation.** The EEG plotting scripts generate scalp
+    topographies and plots showing the distribution of posterior EEG
+    power across infants.
+
+## 4. Software requirements
+
+The analyses require:
+
+-   MATLAB.
+-   The MATLAB toolboxes required by the individual processing and
+    statistical scripts, including the Signal Processing Toolbox, 
+    Statistics and Machine Learning Toolbox and Homer3 where used.
+-   EEGLAB, including the functions required for EEG scalp topography
+    plotting.
+
+External functions and toolboxes must be installed and available on the
+MATLAB path before running the relevant scripts.
+
+## 5. Reproducibility
+
+The scripts are provided to support transparency and reproducibility of
+the analyses reported in the associated research.
+
+## 6. Citation and reuse
+
+If you use or adapt the code in this repository, please cite the
+associated NEST research publication:
+
+**\[Insert full publication reference\]**
+
+The repository and its archived version should also be cited using the
+associated DOI:
+
+**\[Insert repository DOI\]**
+
+Please refer to the repository licence for the terms governing reuse,
+modification and redistribution of the code.
